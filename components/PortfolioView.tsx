@@ -196,23 +196,23 @@ function PortfolioContent({ address }: { address: string }) {
     <div className="max-w-3xl mx-auto space-y-4">
 
       {/* ── Profile Card ── */}
-      <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl shadow-xl px-6 py-5 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center text-3xl flex-shrink-0">
+      <div className="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl shadow-xl px-4 sm:px-6 py-5 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3 min-w-0">
+          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-white/20 flex items-center justify-center text-2xl sm:text-3xl flex-shrink-0">
             {avatar}
           </div>
-          <div>
-            <p className="font-bold text-white text-base">{username}</p>
-            <p className="text-orange-100 text-xs font-mono mt-0.5">
-              {address.slice(0, 10)}...{address.slice(-6)}
+          <div className="min-w-0">
+            <p className="font-bold text-white text-sm sm:text-base truncate">{username}</p>
+            <p className="text-orange-100 text-xs font-mono mt-0.5 truncate">
+              {address.slice(0, 8)}...{address.slice(-6)}
             </p>
           </div>
         </div>
         <button
           onClick={() => { setEditValue(username); setEditAvatar(avatar); setEditOpen(true); }}
-          className="flex items-center gap-1.5 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-xl transition-all"
+          className="flex items-center gap-1 sm:gap-1.5 bg-white/20 hover:bg-white/30 text-white text-xs sm:text-sm font-semibold px-3 sm:px-4 py-2 rounded-xl transition-all shrink-0"
         >
-          ✏️ Edit Profile
+          ✏️ <span className="hidden sm:inline">Edit Profile</span><span className="sm:hidden">Edit</span>
         </button>
       </div>
 
@@ -270,7 +270,7 @@ function PortfolioContent({ address }: { address: string }) {
       )}
 
       {/* ── Total Balance Card ── */}
-      <div className="bg-white rounded-2xl shadow-xl border border-orange-100 px-8 py-6">
+      <div className="bg-white rounded-2xl shadow-xl border border-orange-100 px-5 sm:px-8 py-5 sm:py-6">
         <div className="flex items-start justify-between">
           <div>
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Total Balance</p>
@@ -286,7 +286,7 @@ function PortfolioContent({ address }: { address: string }) {
 
       {/* ── Token List Card ── */}
       <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden">
-        <div className="px-8">
+        <div className="px-4 sm:px-8">
           {visibleTokens.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-gray-400 text-sm">No tokens found in your wallet.</p>
@@ -311,7 +311,7 @@ function PortfolioContent({ address }: { address: string }) {
         </div>
 
         {/* Footer */}
-        <div className="px-8 py-4 bg-orange-50 border-t border-orange-100">
+        <div className="px-4 sm:px-8 py-4 bg-orange-50 border-t border-orange-100">
           <button
             onClick={() => window.open(`https://basescan.org/address/${address}`, '_blank')}
             className="w-full flex items-center justify-center gap-2 text-sm font-semibold text-orange-600 hover:text-orange-700 transition-colors"

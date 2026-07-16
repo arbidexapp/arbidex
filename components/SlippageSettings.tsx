@@ -42,7 +42,7 @@ export function SlippageSettings({ slippage, onChange }: SlippageSettingsProps) 
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute right-0 mt-2 w-64 bg-white rounded-2xl shadow-xl border border-orange-100 p-4 z-50">
+          <div className="absolute right-0 mt-2 w-64 max-w-[calc(100vw-2rem)] bg-white rounded-2xl shadow-xl border border-orange-100 p-4 z-50">
             <div className="flex justify-between items-center mb-3">
               <h4 className="font-semibold text-gray-800 text-sm">Slippage tolerance</h4>
               <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-gray-600">

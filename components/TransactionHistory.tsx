@@ -48,54 +48,87 @@ function TxRow({ tx }: { tx: TxRecord }) {
   const { relative, date } = timeAgo(tx.timestamp);
 
   return (
-    <tr className="border-b border-orange-50 last:border-0 hover:bg-orange-50/40 transition-colors">
-      {/* TRANSACTION */}
-      <td className="py-4 px-6">
-        <div className="inline-flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2 shadow-sm">
-          {tx.type === 'swap' ? (
-            <>
-              <TokenLogo symbol={tx.tokenIn} />
-              <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
-              <span className="text-gray-400 text-sm mx-1">→</span>
-              <TokenLogo symbol={tx.tokenOut} />
-              <span className="text-gray-800 text-sm font-bold">{tx.tokenOut}</span>
-            </>
-          ) : (
-            <>
-              <TokenLogo symbol={tx.tokenIn} />
-              <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
-              <span className="text-gray-500 text-xs ml-1">Send {tx.amountIn}</span>
-            </>
-          )}
-        </div>
-      </td>
+    <>
+      {/* ── Desktop row (md+) ── */}
+      <tr className="hidden md:table-row border-b border-orange-50 last:border-0 hover:bg-orange-50/40 transition-colors">
+        {/* TRANSACTION */}
+        <td className="py-4 px-6">
+          <div className="inline-flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2 shadow-sm">
+            {tx.type === 'swap' ? (
+              <>
+                <TokenLogo symbol={tx.tokenIn} />
+                <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
+                <span className="text-gray-400 text-sm mx-1">→</span>
+                <TokenLogo symbol={tx.tokenOut} />
+                <span className="text-gray-800 text-sm font-bold">{tx.tokenOut}</span>
+              </>
+            ) : (
+              <>
+                <TokenLogo symbol={tx.tokenIn} />
+                <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
+                <span className="text-gray-500 text-xs ml-1">Send {tx.amountIn}</span>
+              </>
+            )}
+          </div>
+        </td>
+        <td className="py-4 px-6 text-center">
+          <div className="font-semibold text-gray-800 text-sm">{relative}</div>
+          <div className="text-xs text-gray-400">{date}</div>
+        </td>
+        <td className="py-4 px-6 text-center">
+          <div className="flex items-center justify-center gap-3">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+              ✓ Completed
+            </span>
+            <a href={`https://basescan.org/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer"
+              className="text-orange-500 hover:text-orange-600 transition-colors" title="View on BaseScan">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+              </svg>
+            </a>
+          </div>
+        </td>
+      </tr>
 
-      {/* TIME */}
-      <td className="py-4 px-6 text-center">
-        <div className="font-semibold text-gray-800 text-sm">{relative}</div>
-        <div className="text-xs text-gray-400">{date}</div>
-      </td>
-
-      {/* STATUS */}
-      <td className="py-4 px-6 text-center">
-        <div className="flex items-center justify-center gap-3">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
-            ✓ Completed
-          </span>
-          <a
-            href={`https://basescan.org/tx/${tx.hash}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-500 hover:text-orange-600 transition-colors"
-            title="View on BaseScan"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-            </svg>
-          </a>
-        </div>
-      </td>
-    </tr>
+      {/* ── Mobile card (< md) ── */}
+      <tr className="md:hidden border-b border-orange-50 last:border-0">
+        <td colSpan={3} className="px-4 py-3">
+          <div className="flex items-center justify-between gap-3">
+            {/* Left: tokens */}
+            <div className="flex items-center gap-2 flex-1 min-w-0">
+              {tx.type === 'swap' ? (
+                <div className="flex items-center gap-1.5 flex-wrap">
+                  <TokenLogo symbol={tx.tokenIn} />
+                  <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
+                  <span className="text-gray-400 text-sm">→</span>
+                  <TokenLogo symbol={tx.tokenOut} />
+                  <span className="text-gray-800 text-sm font-bold">{tx.tokenOut}</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <TokenLogo symbol={tx.tokenIn} />
+                  <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
+                  <span className="text-gray-500 text-xs">Send {tx.amountIn}</span>
+                </div>
+              )}
+            </div>
+            {/* Right: time + link */}
+            <div className="flex items-center gap-2 shrink-0">
+              <div className="text-right">
+                <div className="text-xs font-semibold text-gray-700">{relative}</div>
+                <div className="text-xs text-gray-400">{date}</div>
+              </div>
+              <a href={`https://basescan.org/tx/${tx.hash}`} target="_blank" rel="noopener noreferrer"
+                className="text-orange-500 hover:text-orange-600" title="View on BaseScan">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </td>
+      </tr>
+    </>
   );
 }
 
@@ -161,7 +194,7 @@ export function TransactionHistory() {
         ) : (
           <>
             <table className="w-full">
-              <thead>
+              <thead className="hidden md:table-header-group">
                 <tr className="border-b border-orange-100 bg-orange-50/60">
                   <th className="py-3 px-6 text-left text-xs font-bold text-gray-500 uppercase tracking-wider">Transaction</th>
                   <th className="py-3 px-6 text-center text-xs font-bold text-gray-500 uppercase tracking-wider">Time</th>

@@ -76,30 +76,24 @@ export function LeaderboardView() {
       {/* YOUR WALLET RANK */}
       <div className="bg-white rounded-2xl shadow-xl border border-orange-100 overflow-hidden">
         {isConnected ? (
-          <table className="w-full">
-            <tbody>
-              <tr>
-                <td className="px-6 py-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Your Wallet Rank</p>
-                  <p className="text-2xl font-extrabold text-gray-900">
-                    {myRank ? `#${myRank}` : '—'}
-                  </p>
-                </td>
-                <td className="px-6 py-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Points</p>
-                  <p className="text-lg font-bold text-orange-500">{myRow ? formatPts(myRow.points) : '—'}</p>
-                </td>
-                <td className="px-6 py-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Volume</p>
-                  <p className="text-lg font-bold text-gray-900">{myRow ? formatVol(myRow.volume_usd) : '—'}</p>
-                </td>
-                <td className="px-6 py-5">
-                  <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Trades</p>
-                  <p className="text-lg font-bold text-gray-900">{myRow ? myRow.trade_count : '—'}</p>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="grid grid-cols-2 sm:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-orange-100">
+            <div className="px-5 py-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Your Rank</p>
+              <p className="text-2xl font-extrabold text-gray-900">{myRank ? `#${myRank}` : '—'}</p>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Points</p>
+              <p className="text-lg font-bold text-orange-500">{myRow ? formatPts(myRow.points) : '—'}</p>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Volume</p>
+              <p className="text-lg font-bold text-gray-900">{myRow ? formatVol(myRow.volume_usd) : '—'}</p>
+            </div>
+            <div className="px-5 py-4">
+              <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Trades</p>
+              <p className="text-lg font-bold text-gray-900">{myRow ? myRow.trade_count : '—'}</p>
+            </div>
+          </div>
         ) : (
           <div className="px-6 py-5">
             <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Your Wallet Rank</p>
@@ -128,7 +122,7 @@ export function LeaderboardView() {
         ) : (
           <>
             <div className="overflow-x-auto">
-              <table className="w-full">
+              <table className="w-full min-w-[480px]">
                 <thead className="bg-gray-50 border-b border-gray-100">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rank / Address</th>
