@@ -32,7 +32,7 @@ export function Navigation() {
                 alt="Aggrex"
                 width={300}
                 height={72}
-                className="object-contain h-32 w-auto"
+                className="object-contain h-16 w-auto"
                 priority
               />
             </Link>
