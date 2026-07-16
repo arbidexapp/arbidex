@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#f59e0b"/>
+    </linearGradient>
+    <linearGradient id="arrow" x1="24" y1="32" x2="24" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect width="48" height="48" rx="13" fill="url(#bg)"/>
+
+  <!-- A left leg -->
+  <path d="M13 37 L24 11 L35 37" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- A crossbar -->
+  <line x1="18" y1="28" x2="30" y2="28" stroke="white" stroke-width="3.5" stroke-linecap="round"/>
+
+  <!-- Small upward arrow tip inside the A peak -->
+  <path d="M21 16 L24 11 L27 16" stroke="url(#arrow)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+</svg>

@@ -12,6 +12,10 @@ export const metadata: Metadata = {
   title: "Aggrex - DEX Aggregator on Base",
   description: "Find the best swap rates across Uniswap V3, PancakeSwap V3, and Aerodrome on Base network",
   metadataBase: new URL('https://aggrex.vercel.app'),
+  icons: {
+    icon: '/logo.svg',
+    apple: '/logo.svg',
+  },
   openGraph: {
     title: 'Aggrex - DEX Aggregator on Base',
     description: 'Find the best swap rates across Uniswap V3, PancakeSwap V3, and Aerodrome on Base.',

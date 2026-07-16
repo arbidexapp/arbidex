@@ -25,8 +25,11 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent">
-              Aggrex
+            <Link href="/" className="flex items-center gap-2">
+              <img src="/logo.svg" alt="Aggrex" className="w-8 h-8" />
+              <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent">
+                Aggrex
+              </span>
             </Link>
           </div>
 
