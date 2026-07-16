@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { WalletButton } from './WalletButton';
 import { useState } from 'react';
+import Image from 'next/image';
 
 const navItems = [
   { name: 'Swap', href: '/' },
@@ -25,8 +26,8 @@ export function Navigation() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
-            <Link href="/" className="flex items-center gap-2">
-              <img src="/aggrex-logo.png" alt="Aggrex" className="w-8 h-8 object-contain" />
+            <Link href="/" className="flex items-center gap-2.5">
+              <Image src="/aggrex-logo.png" alt="Aggrex" width={36} height={36} className="object-contain" />
               <span className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent">
                 Aggrex
               </span>
