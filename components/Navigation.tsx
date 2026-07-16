@@ -11,6 +11,7 @@ const navItems = [
   { name: 'Leaderboard', href: '/leaderboard' },
   { name: 'Tasks', href: '/tasks' },
   { name: 'History', href: '/history' },
+  { name: 'Docs', href: '/docs' },
   { name: 'Portfolio', href: '/portfolio' },
 ];
 
