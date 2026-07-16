@@ -53,20 +53,20 @@ function Table({ headers, rows }: { headers: string[]; rows: string[][] }) {
   );
 }
 
-// ── PAGE: What is Arbidex ─────────────────────────────────────────────────────
-const whatIsArbidex = (
+// ── PAGE: What is Aggrex ─────────────────────────────────────────────────────
+const whatIsAggrex = (
   <div>
     <p className="text-gray-600 text-lg leading-relaxed mb-4">
-      <strong>Arbidex</strong> is a <strong>DEX Aggregator</strong> running on{' '}
+      <strong>Aggrex</strong> is a <strong>DEX Aggregator</strong> running on{' '}
       <a href="https://base.org" target="_blank" rel="noopener noreferrer" className="text-orange-500 hover:underline">Base</a>.
       It lets users swap tokens from a single interface while scanning multiple DEXs at once to find the <strong>best price</strong>.
     </p>
-    <Info>Arbidex is currently active on <strong>Base Mainnet</strong> (Chain ID: <Code>8453</Code>).</Info>
+    <Info>Aggrex is currently active on <strong>Base Mainnet</strong> (Chain ID: <Code>8453</Code>).</Info>
 
-    <H2 id="why-arbidex">Why Arbidex?</H2>
+    <H2 id="why-Aggrex">Why Aggrex?</H2>
     <p className="text-gray-600 leading-relaxed mb-3">
       Liquidity on Base is spread across many DEXs — Uniswap, PancakeSwap, Aerodrome, and others.
-      Swapping on a single DEX won't always get the best price. Arbidex solves this:
+      Swapping on a single DEX won't always get the best price. Aggrex solves this:
     </p>
     <ul className="list-none space-y-2 mb-4">
       {[
@@ -83,7 +83,7 @@ const whatIsArbidex = (
 
     <H2 id="core-principle">Core Architectural Principle</H2>
     <blockquote className="border-l-4 border-orange-400 pl-4 py-2 bg-orange-50 rounded-r-xl my-4 text-gray-700 italic text-sm">
-      Arbidex is a <strong>pure price-comparison and routing layer</strong>. User funds are never sent to a contract owned by Arbidex; a swap always goes to the selected DEX's own router.
+      Aggrex is a <strong>pure price-comparison and routing layer</strong>. User funds are never sent to a contract owned by Aggrex; a swap always goes to the selected DEX's own router.
     </blockquote>
 
     <H2 id="modules">What's Inside the Product?</H2>
@@ -121,7 +121,7 @@ flowchart LR
 // ── PAGE: Getting Started ─────────────────────────────────────────────────────
 const gettingStarted = (
   <div>
-    <p className="text-gray-600 text-lg leading-relaxed mb-4">Get up and running with Arbidex in a few steps.</p>
+    <p className="text-gray-600 text-lg leading-relaxed mb-4">Get up and running with Aggrex in a few steps.</p>
 
     <H2 id="connect-wallet">1. Connect Your Wallet</H2>
     <p className="text-gray-600 leading-relaxed mb-3">
@@ -131,7 +131,7 @@ const gettingStarted = (
 
     <H2 id="right-network">2. Make Sure You're on the Right Network</H2>
     <p className="text-gray-600 leading-relaxed mb-2">
-      Arbidex only works on <strong>Base Mainnet</strong> (Chain ID: <Code>8453</Code>).
+      Aggrex only works on <strong>Base Mainnet</strong> (Chain ID: <Code>8453</Code>).
       If your wallet is on a different network, the app automatically prompts a network switch.
     </p>
     <Warning>Never attempt to send a transaction on a network other than Base — contracts won't be found or the transaction will fail.</Warning>
@@ -146,7 +146,7 @@ const gettingStarted = (
       <li>Go to the <strong>Swap</strong> tab.</li>
       <li>In "You pay", select the token and enter the amount (25% / 50% / 75% / MAX shortcuts available).</li>
       <li>In "You receive", select the token you want.</li>
-      <li>Arbidex queries prices across Uniswap V3, PancakeSwap V3, and Aerodrome, showing the best route.</li>
+      <li>Aggrex queries prices across Uniswap V3, PancakeSwap V3, and Aerodrome, showing the best route.</li>
       <li>Check your slippage tolerance (default <Code>0.5%</Code>).</li>
       <li>Confirm — your wallet sends the transaction directly to the selected DEX's router contract.</li>
     </ol>
@@ -199,7 +199,7 @@ flowchart TD
     <H2 id="execution-flow">Execution Flow</H2>
     <ol className="list-decimal list-inside space-y-2 text-sm text-gray-600 mb-2 pl-2">
       <li>If the token hasn't been approved, an <strong>ERC-20 approve</strong> transaction is requested first.</li>
-      <li>The <strong>swap</strong> transaction is sent directly to the selected DEX's router — no Arbidex intermediary.</li>
+      <li>The <strong>swap</strong> transaction is sent directly to the selected DEX's router — no Aggrex intermediary.</li>
       <li>The result appears under the <strong>History</strong> tab.</li>
     </ol>
 
@@ -211,7 +211,7 @@ sequenceDiagram
     R-->>U: Approval confirmed
     U->>R: swapExactTokensForTokens(...)
     R-->>U: Tokens received
-    Note over U,R: No Arbidex contract in this flow
+    Note over U,R: No Aggrex contract in this flow
 `} />
     <Info>Only <strong>single-hop</strong> routes are supported. Multi-hop and split-routing are not supported yet.</Info>
   </div>
@@ -241,7 +241,7 @@ const sendDocs = (
     <p className="text-gray-600 text-sm leading-relaxed mb-3">
       Enter token, recipient, and amount → native ETH triggers a plain transfer, ERC-20 triggers the token's <Code>transfer</Code> function → once confirmed, it appears in <strong>History</strong> and contributes to <strong>Tasks & Rewards</strong> points.
     </p>
-    <Warning>Transfers on Base are <strong>irreversible</strong>. Arbidex performs no scam-address safety checks beyond basic address format validation.</Warning>
+    <Warning>Transfers on Base are <strong>irreversible</strong>. Aggrex performs no scam-address safety checks beyond basic address format validation.</Warning>
   </div>
 );
 
@@ -314,17 +314,17 @@ flowchart LR
 const architectureDocs = (
   <div>
     <p className="text-gray-600 text-lg leading-relaxed mb-4">
-      <strong>No intermediary contract.</strong> Arbidex's core decision: no custom aggregator/swap smart contract is written or deployed.
+      <strong>No intermediary contract.</strong> Aggrex's core decision: no custom aggregator/swap smart contract is written or deployed.
     </p>
 
     <MermaidDiagram chart={`
 flowchart LR
-    Arbidex["Arbidex\\n(price comparison + routing suggestion only)"]
+    Aggrex["Aggrex\\n(price comparison + routing suggestion only)"]
     Wallet["User Wallet"]
     Uni["Uniswap V3 Router"]
     Pan["PancakeSwap V3 Router"]
     Aero["Aerodrome Router"]
-    Arbidex -. "1. best route suggestion" .-> Wallet
+    Aggrex -. "1. best route suggestion" .-> Wallet
     Wallet -- "2. approve + swap" --> Uni
     Wallet -- "2. approve + swap" --> Pan
     Wallet -- "2. approve + swap" --> Aero
@@ -339,7 +339,7 @@ flowchart LR
 
     <H2 id="arch-comparison">Comparison</H2>
     <Table
-      headers={['Criterion','Intermediary aggregator','Arbidex (direct router)']}
+      headers={['Criterion','Intermediary aggregator','Aggrex (direct router)']}
       rows={[
         ['Audit requirement','Own contract must be audited','None — only already-audited DEX contracts used'],
         ['Fund risk','Funds pass through an intermediary','Funds go directly to the DEX router'],
@@ -355,7 +355,7 @@ flowchart LR
 
     <MermaidDiagram chart={`
 sequenceDiagram
-    participant App as Arbidex Frontend
+    participant App as Aggrex Frontend
     participant MC as Multicall3
     participant UniQ as Uniswap QuoterV2
     participant PanQ as PancakeSwap QuoterV2
@@ -404,11 +404,11 @@ sequenceDiagram
 // ── PAGE: Security ────────────────────────────────────────────────────────────
 const securityDocs = (
   <div>
-    <p className="text-gray-600 text-lg leading-relaxed mb-4">Security principles baked into Arbidex's design.</p>
+    <p className="text-gray-600 text-lg leading-relaxed mb-4">Security principles baked into Aggrex's design.</p>
     <H2 id="sec-principles">Core Principles</H2>
     <ul className="list-none space-y-3 mb-4">
       {[
-        ['🔐','No smart contract of our own.','Arbidex never deploys a contract that holds or routes user funds, eliminating custom-contract risk entirely.'],
+        ['🔐','No smart contract of our own.','Aggrex never deploys a contract that holds or routes user funds, eliminating custom-contract risk entirely.'],
         ['🔀','Every transaction goes directly to the DEX router.','Approve and swap calls always target Uniswap\'s, PancakeSwap\'s, or Aerodrome\'s own audited contracts.'],
         ['🛡️','Slippage protection is mandatory.','amountOutMinimum is always calculated and included — a swap is never sent without it.'],
         ['⏱️','Deadline parameter.','Every transaction expires automatically if not confirmed in time (20 min default).'],
@@ -424,7 +424,7 @@ const securityDocs = (
       {[
         'Watch approval amounts — some routers may request unlimited approval; check what your wallet is granting.',
         'Verify recipient addresses (Send) — transfers on Base are irreversible.',
-        'Token safety — Arbidex doesn\'t offer a comprehensive scam-token filter; research unfamiliar tokens before trading.',
+        'Token safety — Aggrex doesn\'t offer a comprehensive scam-token filter; research unfamiliar tokens before trading.',
       ].map((item) => (
         <li key={item} className="flex gap-2"><span className="text-orange-400 shrink-0">•</span><span>{item}</span></li>
       ))}
@@ -436,11 +436,11 @@ const securityDocs = (
 // ── PAGE: FAQ ─────────────────────────────────────────────────────────────────
 const faqDocs = (
   <div>
-    <p className="text-gray-600 text-lg leading-relaxed mb-6">Frequently asked questions about Arbidex.</p>
+    <p className="text-gray-600 text-lg leading-relaxed mb-6">Frequently asked questions about Aggrex.</p>
     <div className="space-y-3">
       {[
-        ['Is Arbidex a DEX?','No. Arbidex has no liquidity pools of its own. It\'s an aggregator that scans Uniswap V3, PancakeSwap V3, Aerodrome — and recommends the best route.'],
-        ['Does Arbidex have its own smart contract?','No. Swaps always go directly to the selected DEX\'s own router; Arbidex is never an intermediary.'],
+        ['Is Aggrex a DEX?','No. Aggrex has no liquidity pools of its own. It\'s an aggregator that scans Uniswap V3, PancakeSwap V3, Aerodrome — and recommends the best route.'],
+        ['Does Aggrex have its own smart contract?','No. Swaps always go directly to the selected DEX\'s own router; Aggrex is never an intermediary.'],
         ['Which networks are supported?','Currently only Base Mainnet (Chain ID: 8453).'],
         ['Is multi-hop or split-routing supported?','No, only single-hop routes (one DEX, one pool) are supported currently.'],
         ['How do I earn points?','Every swap earns 200 points, every send earns 100 points. One-time bonuses at 10/25/50 milestones, plus social tasks like following on X.'],
@@ -466,9 +466,9 @@ interface Section { id: string; title: string; }
 interface DocPage { id: string; label: string; group: string; sections: Section[]; content: React.ReactNode; }
 
 const PAGES: DocPage[] = [
-  { id:'what-is-arbidex', label:'What is Arbidex?', group:'Protocol',
-    sections:[{id:'why-arbidex',title:'Why Arbidex?'},{id:'core-principle',title:'Core Principle'},{id:'modules',title:"What's Inside?"},{id:'overview-diagram',title:'Overview Diagram'}],
-    content: whatIsArbidex },
+  { id:'what-is-Aggrex', label:'What is Aggrex?', group:'Protocol',
+    sections:[{id:'why-Aggrex',title:'Why Aggrex?'},{id:'core-principle',title:'Core Principle'},{id:'modules',title:"What's Inside?"},{id:'overview-diagram',title:'Overview Diagram'}],
+    content: whatIsAggrex },
   { id:'getting-started', label:'Getting Started', group:'Guides',
     sections:[{id:'connect-wallet',title:'Connect Wallet'},{id:'right-network',title:'Right Network'},{id:'first-swap',title:'Your First Swap'}],
     content: gettingStarted },
@@ -495,7 +495,7 @@ const PAGES: DocPage[] = [
 
 // ── Main Layout component ─────────────────────────────────────────────────────
 export function DocsLayout() {
-  const [activePage, setActivePage] = useState('what-is-arbidex');
+  const [activePage, setActivePage] = useState('what-is-Aggrex');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const page = PAGES.find((p) => p.id === activePage) ?? PAGES[0];

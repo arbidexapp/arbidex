@@ -26,7 +26,7 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/" className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-amber-600 bg-clip-text text-transparent">
-              Arbidex
+              Aggrex
             </Link>
           </div>
 

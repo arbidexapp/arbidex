@@ -127,7 +127,7 @@ function PortfolioContent({ address }: { address: string }) {
 
   const AVATARS = ['🦊','🐺','🦁','🐯','🐻','🦝','🐼','🦄','🐉','🤖'];
 
-  const [username, setUsername] = useState('Arbidex User');
+  const [username, setUsername] = useState('Aggrex User');
   const [avatar,   setAvatar]   = useState('🦊');
   const [editOpen, setEditOpen] = useState(false);
   const [editValue, setEditValue] = useState('');
@@ -247,7 +247,7 @@ function PortfolioContent({ address }: { address: string }) {
               onChange={(e) => setEditValue(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSave()}
               maxLength={32}
-              placeholder="Arbidex User"
+              placeholder="Aggrex User"
               className="w-full px-4 py-2.5 border border-orange-200 rounded-xl outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-100 text-gray-900 text-sm mb-4"
               autoFocus
             />

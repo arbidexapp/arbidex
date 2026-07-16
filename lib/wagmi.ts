@@ -13,7 +13,7 @@ const baseTransport = fallback([
 ]);
 
 export const config = getDefaultConfig({
-  appName: 'Arbidex - DEX Aggregator',
+  appName: 'Aggrex - DEX Aggregator',
   projectId,
   chains: [base],
   transports: { [base.id]: baseTransport },

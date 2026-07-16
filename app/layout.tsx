@@ -9,8 +9,15 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Arbidex - DEX Aggregator on Base",
+  title: "Aggrex - DEX Aggregator on Base",
   description: "Find the best swap rates across Uniswap V3, PancakeSwap V3, and Aerodrome on Base network",
+  metadataBase: new URL('https://aggrex.vercel.app'),
+  openGraph: {
+    title: 'Aggrex - DEX Aggregator on Base',
+    description: 'Find the best swap rates across Uniswap V3, PancakeSwap V3, and Aerodrome on Base.',
+    url: 'https://aggrex.vercel.app',
+    siteName: 'Aggrex',
+  },
 };
 
 export default function RootLayout({

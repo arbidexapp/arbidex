@@ -151,7 +151,7 @@ function SocialTaskCard({ wallet }: { wallet: string }) {
 
   const handleFollow = async () => {
     if (done || loading) return;
-    window.open('https://x.com/arbidex', '_blank');
+    window.open('https://x.com/aggrex', '_blank');
     setLoading(true);
     try {
       await grantSocialTaskPoints(wallet, 'x_follow', 2500);

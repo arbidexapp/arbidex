@@ -1,7 +1,7 @@
 -- ── Profiles ─────────────────────────────────────────────────────────────────
 create table if not exists profiles (
   wallet     text primary key,
-  username   text not null default 'Arbidex User',
+  username   text not null default 'Aggrex User',
   avatar     text not null default '🦊',
   updated_at timestamptz default now()
 );

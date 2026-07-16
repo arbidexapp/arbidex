@@ -67,4 +67,4 @@ export interface RouteInfo {
 }
 
 // Builder Code for ERC-8021 Attribution
-export const BUILDER_CODE = process.env.NEXT_PUBLIC_BUILDER_CODE || 'bc_arbidex';
+export const BUILDER_CODE = process.env.NEXT_PUBLIC_BUILDER_CODE || 'bc_aggrex';
