@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { WalletButton } from './WalletButton';
 import { useState } from 'react';
 
 const navItems = [
@@ -52,7 +52,7 @@ export function Navigation() {
 
           {/* Right side: Connect + Hamburger */}
           <div className="flex items-center gap-3">
-            <ConnectButton showBalance={false} />
+            <WalletButton />
             {/* Hamburger — mobile only */}
             <button
               onClick={() => setMobileOpen((v) => !v)}
