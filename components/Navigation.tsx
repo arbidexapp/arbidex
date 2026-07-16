@@ -27,7 +27,14 @@ export function Navigation() {
           {/* Logo */}
           <div className="flex-shrink-0 flex items-center">
             <Link href="/">
-              <Image src="/aggrex-logo.png" alt="Aggrex" width={120} height={40} className="object-contain" />
+              <Image
+                src="/aggrex-logo.png"
+                alt="Aggrex"
+                width={140}
+                height={36}
+                className="object-contain h-9 w-auto"
+                priority
+              />
             </Link>
           </div>
 
