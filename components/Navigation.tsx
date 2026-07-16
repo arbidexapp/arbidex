@@ -30,9 +30,9 @@ export function Navigation() {
               <Image
                 src="/aggrex-logo.png"
                 alt="Aggrex"
-                width={140}
-                height={36}
-                className="object-contain h-9 w-auto"
+                width={180}
+                height={48}
+                className="object-contain h-12 w-auto"
                 priority
               />
             </Link>
