@@ -108,17 +108,7 @@ function ConnectedMenu({
       {/* Dropdown */}
       {open && (
         <div className="absolute right-0 mt-2 w-56 bg-white border border-orange-100 rounded-2xl shadow-xl z-50 overflow-hidden">
-          {/* Header */}
-          <div className="px-4 py-3 bg-gradient-to-r from-orange-50 to-amber-50 border-b border-orange-100">
-            <p className="text-xs font-semibold text-gray-400 uppercase tracking-widest mb-1">Connected</p>
-            <p className="text-sm font-mono font-bold text-gray-800 truncate">{account.displayName}</p>
-            {account.displayBalance && (
-              <p className="text-xs text-orange-500 font-semibold mt-0.5">{account.displayBalance}</p>
-            )}
-          </div>
-
-          {/* Actions */}
-          <div className="p-2 space-y-1">
+        <div className="p-2 space-y-1">
             <button
               onClick={copyAddress}
               className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm text-gray-700 hover:bg-orange-50 hover:text-orange-600 transition-all font-medium"
