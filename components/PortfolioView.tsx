@@ -4,6 +4,7 @@ import { useAccount, useBalance, useReadContracts } from 'wagmi';
 import { formatUnits } from 'viem';
 import { TOKENS } from '@/lib/contracts';
 import { useState, useEffect } from 'react';
+import { getProfile, upsertProfile } from '@/lib/supabase-db';
 
 const TW = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/base/assets';
 
@@ -122,9 +123,6 @@ export function PortfolioView() {
 }
 
 function PortfolioContent({ address }: { address: string }) {
-  const storageKey    = `arbidex_username_${address.toLowerCase()}`;
-  const avatarKey     = `arbidex_avatar_${address.toLowerCase()}`;
-
   const AVATARS = ['🦊','🐺','🦁','🐯','🐻','🦝','🐼','🦄','🐉','🤖'];
 
   const [username, setUsername] = useState('Aggrex User');
@@ -134,12 +132,15 @@ function PortfolioContent({ address }: { address: string }) {
   const [editAvatar, setEditAvatar] = useState('🦊');
   const [ethPrice, setEthPrice] = useState(0);
 
+  // Load profile from Supabase
   useEffect(() => {
-    const savedName   = localStorage.getItem(storageKey);
-    const savedAvatar = localStorage.getItem(avatarKey);
-    if (savedName)   setUsername(savedName);
-    if (savedAvatar) setAvatar(savedAvatar);
-  }, [storageKey, avatarKey]);
+    getProfile(address).then((p) => {
+      if (p) {
+        setUsername(p.username);
+        setAvatar(p.avatar);
+      }
+    }).catch(() => {});
+  }, [address]);
 
   useEffect(() => {
     fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd')
@@ -148,14 +149,14 @@ function PortfolioContent({ address }: { address: string }) {
       .catch(() => {});
   }, []);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const trimmed = editValue.trim();
     if (!trimmed) return;
     setUsername(trimmed);
     setAvatar(editAvatar);
-    localStorage.setItem(storageKey, trimmed);
-    localStorage.setItem(avatarKey, editAvatar);
     setEditOpen(false);
+    // Supabase'e kaydet
+    upsertProfile({ wallet: address, username: trimmed, avatar: editAvatar }).catch(console.error);
   };
   // ETH native balance
   const { data: ethBal } = useBalance({ address: address as `0x${string}` });

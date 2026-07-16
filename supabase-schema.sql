@@ -46,3 +46,18 @@ create policy "leaderboard_insert" on leaderboard for insert with check (true);
 create policy "leaderboard_update" on leaderboard for update using (true);
 
 create index if not exists leaderboard_points_idx on leaderboard(points desc);
+
+-- ── User Tasks (milestone + social task takibi) ──────────────────────────────
+create table if not exists user_tasks (
+  id         uuid primary key default gen_random_uuid(),
+  wallet     text not null,
+  task_key   text not null,         -- e.g. 'milestone_swap_10', 'social_x_follow'
+  granted_at timestamptz default now(),
+  unique(wallet, task_key)
+);
+
+alter table user_tasks enable row level security;
+create policy "user_tasks_select" on user_tasks for select using (true);
+create policy "user_tasks_insert" on user_tasks for insert with check (true);
+
+create index if not exists user_tasks_wallet_idx on user_tasks(wallet);

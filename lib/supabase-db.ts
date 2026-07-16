@@ -86,42 +86,45 @@ export async function getMyRank(wallet: string): Promise<LeaderboardRow | null> 
   return data ?? null;
 }
 
-// Swap/send milestone bonus thresholds
+// ── User Tasks (milestone + social — Supabase tabanlı) ────────────────────────
+async function isTaskGranted(wallet: string, taskKey: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('user_tasks')
+    .select('id')
+    .eq('wallet', wallet.toLowerCase())
+    .eq('task_key', taskKey)
+    .single();
+  return !!data;
+}
+
+async function markTaskGranted(wallet: string, taskKey: string): Promise<void> {
+  await supabase.from('user_tasks').upsert(
+    { wallet: wallet.toLowerCase(), task_key: taskKey },
+    { onConflict: 'wallet,task_key' }
+  );
+}
+
+export async function getGrantedTaskKeys(wallet: string): Promise<string[]> {
+  const { data } = await supabase
+    .from('user_tasks')
+    .select('task_key')
+    .eq('wallet', wallet.toLowerCase());
+  return (data ?? []).map((r: { task_key: string }) => r.task_key);
+}
+
+// ── Leaderboard update + milestone bonuses ────────────────────────────────────
 const SWAP_MILESTONES: Record<number, number> = { 10: 2500, 25: 7500, 50: 20000 };
 const SEND_MILESTONES: Record<number, number> = { 10: 1500, 25: 4000, 50: 10000 };
 
-// Track which milestones have been granted in localStorage
-function getMilestonesKey(wallet: string, type: 'swap' | 'send') {
-  return `arbidex_milestones_${type}_${wallet.toLowerCase()}`;
-}
-
-function getGrantedMilestones(wallet: string, type: 'swap' | 'send'): number[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    return JSON.parse(localStorage.getItem(getMilestonesKey(wallet, type)) ?? '[]');
-  } catch { return []; }
-}
-
-function markMilestoneGranted(wallet: string, type: 'swap' | 'send', count: number) {
-  if (typeof window === 'undefined') return;
-  const granted = getGrantedMilestones(wallet, type);
-  if (!granted.includes(count)) {
-    localStorage.setItem(getMilestonesKey(wallet, type), JSON.stringify([...granted, count]));
-  }
-}
-
-// Update leaderboard after swap/send + check milestone bonuses
-// Each swap = 200 pts, each send = 100 pts
 export async function updateLeaderboard(
   wallet: string,
   type: 'swap' | 'send',
   volumeUsd: number = 0
 ): Promise<void> {
-  const pts       = type === 'swap' ? 200 : 100;
-  const w         = wallet.toLowerCase();
+  const pts      = type === 'swap' ? 200 : 100;
+  const w        = wallet.toLowerCase();
   const milestones = type === 'swap' ? SWAP_MILESTONES : SEND_MILESTONES;
 
-  // Fetch existing record
   const { data: existing } = await supabase
     .from('leaderboard')
     .select('points, volume_usd, trade_count')
@@ -130,14 +133,17 @@ export async function updateLeaderboard(
 
   const newTradeCount = (existing?.trade_count ?? 0) + 1;
 
-  // Milestone bonus hesapla
-  const granted = getGrantedMilestones(wallet, type);
+  // Milestone bonus — Supabase üzerinden kontrol
   let bonusPts = 0;
   for (const [threshold, bonus] of Object.entries(milestones)) {
     const t = Number(threshold);
-    if (newTradeCount >= t && !granted.includes(t)) {
-      bonusPts += bonus;
-      markMilestoneGranted(wallet, type, t);
+    if (newTradeCount >= t) {
+      const taskKey = `milestone_${type}_${t}`;
+      const alreadyGranted = await isTaskGranted(w, taskKey);
+      if (!alreadyGranted) {
+        bonusPts += bonus;
+        await markTaskGranted(w, taskKey);
+      }
     }
   }
 
@@ -160,17 +166,17 @@ export async function updateLeaderboard(
   }
 }
 
-// Social task: grant points for X follow (one-time)
+// ── Social tasks ──────────────────────────────────────────────────────────────
 export async function grantSocialTaskPoints(
   wallet: string,
   task: string,
   points: number
 ): Promise<boolean> {
-  const w   = wallet.toLowerCase();
-  const key = `arbidex_social_${task}_${w}`;
+  const w       = wallet.toLowerCase();
+  const taskKey = `social_${task}`;
 
-  // localStorage ile tekrar verilmesini engelle
-  if (typeof window !== 'undefined' && localStorage.getItem(key)) return false;
+  const alreadyGranted = await isTaskGranted(w, taskKey);
+  if (alreadyGranted) return false;
 
   const { data: existing } = await supabase
     .from('leaderboard')
@@ -185,13 +191,10 @@ export async function grantSocialTaskPoints(
     }).eq('wallet', w);
   } else {
     await supabase.from('leaderboard').insert({
-      wallet:      w,
-      points:      points,
-      volume_usd:  0,
-      trade_count: 0,
+      wallet: w, points, volume_usd: 0, trade_count: 0,
     });
   }
 
-  if (typeof window !== 'undefined') localStorage.setItem(key, '1');
+  await markTaskGranted(w, taskKey);
   return true;
 }

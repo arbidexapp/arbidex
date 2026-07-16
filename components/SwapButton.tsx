@@ -7,7 +7,6 @@ import { calculateMinAmountOut } from '@/lib/routing';
 import { executeSwap } from '@/lib/swap-executor';
 import { NATIVE_ETH, RouteInfo } from '@/lib/contracts';
 import ERC20ABI from '@/lib/abis/ERC20.json';
-import { saveTx } from '@/lib/tx-history';
 import { saveTxToSupabase, updateLeaderboard } from '@/lib/supabase-db';
 
 interface SwapButtonProps {
@@ -136,17 +135,7 @@ export function SwapButton({
         }
       }
 
-      // 5. Kaydet
-      saveTx({
-        hash: swapHash,
-        type: 'swap',
-        tokenIn: tokenInSymbol,
-        tokenOut: tokenOutSymbol,
-        amountIn,
-        timestamp: Date.now(),
-        wallet: address.toLowerCase(),
-      });
-      // Supabase'e kaydet
+      // 5. Kaydet — sadece Supabase
       saveTxToSupabase({
         hash:      swapHash,
         wallet:    address,
@@ -157,6 +146,8 @@ export function SwapButton({
         timestamp: Date.now(),
       }).catch(console.error);
       updateLeaderboard(address, 'swap', volumeUsd).catch(console.error);
+      // Aynı tab'daki History'yi güncelle
+      window.dispatchEvent(new Event('aggrex_tx_update'));
 
       setStep(SwapStep.SUCCESS);
       onSwapSuccess?.();          // reset UI + refresh balances

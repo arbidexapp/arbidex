@@ -6,7 +6,6 @@ import { parseUnits, formatUnits, isAddress } from 'viem';
 import { TokenSelectModal } from './TokenSelectModal';
 import { NATIVE_ETH, TOKENS } from '@/lib/contracts';
 import ERC20ABI from '@/lib/abis/ERC20.json';
-import { saveTx } from '@/lib/tx-history';
 import { saveTxToSupabase, updateLeaderboard } from '@/lib/supabase-db';
 
 const trustBase = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/base/assets';
@@ -162,17 +161,7 @@ export function SendInterface() {
       setTxHash(hash);
       await publicClient.waitForTransactionReceipt({ hash });
 
-      // Kaydet
-      saveTx({
-        hash,
-        type: 'send',
-        tokenIn: tokenSymbol,
-        tokenOut: '',
-        amountIn: amount,
-        timestamp: Date.now(),
-        wallet: address.toLowerCase(),
-      });
-      // Save to Supabase (fire and log errors)
+      // Kaydet — sadece Supabase
       saveTxToSupabase({
         hash,
         wallet:    address,
@@ -183,6 +172,7 @@ export function SendInterface() {
         timestamp: Date.now(),
       }).catch(console.error);
       updateLeaderboard(address, 'send').catch(console.error);
+      window.dispatchEvent(new Event('aggrex_tx_update'));
 
       // Reset form after success
       setAmount('');

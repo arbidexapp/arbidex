@@ -2,7 +2,7 @@
 
 import { useAccount } from 'wagmi';
 import { useState, useEffect } from 'react';
-import { getTxHistory, TxRecord } from '@/lib/tx-history';
+import { getTxFromSupabase, type TxRow } from '@/lib/supabase-db';
 
 const TW = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/base/assets';
 
@@ -44,7 +44,7 @@ function TokenLogo({ symbol }: { symbol: string }) {
   );
 }
 
-function TxRow({ tx }: { tx: TxRecord }) {
+function TxRow({ tx }: { tx: TxRow }) {
   const { relative, date } = timeAgo(tx.timestamp);
 
   return (
@@ -56,17 +56,17 @@ function TxRow({ tx }: { tx: TxRecord }) {
           <div className="inline-flex items-center gap-2 bg-white border border-orange-100 rounded-xl px-3 py-2 shadow-sm">
             {tx.type === 'swap' ? (
               <>
-                <TokenLogo symbol={tx.tokenIn} />
-                <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
+                <TokenLogo symbol={tx.token_in} />
+                <span className="text-gray-800 text-sm font-bold">{tx.token_in}</span>
                 <span className="text-gray-400 text-sm mx-1">→</span>
-                <TokenLogo symbol={tx.tokenOut} />
-                <span className="text-gray-800 text-sm font-bold">{tx.tokenOut}</span>
+                <TokenLogo symbol={tx.token_out} />
+                <span className="text-gray-800 text-sm font-bold">{tx.token_out}</span>
               </>
             ) : (
               <>
-                <TokenLogo symbol={tx.tokenIn} />
-                <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
-                <span className="text-gray-500 text-xs ml-1">Send {tx.amountIn}</span>
+                <TokenLogo symbol={tx.token_in} />
+                <span className="text-gray-800 text-sm font-bold">{tx.token_in}</span>
+                <span className="text-gray-500 text-xs ml-1">Send {tx.amount_in}</span>
               </>
             )}
           </div>
@@ -98,17 +98,17 @@ function TxRow({ tx }: { tx: TxRecord }) {
             <div className="flex items-center gap-2 flex-1 min-w-0">
               {tx.type === 'swap' ? (
                 <div className="flex items-center gap-1.5 flex-wrap">
-                  <TokenLogo symbol={tx.tokenIn} />
-                  <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
+                  <TokenLogo symbol={tx.token_in} />
+                  <span className="text-gray-800 text-sm font-bold">{tx.token_in}</span>
                   <span className="text-gray-400 text-sm">→</span>
-                  <TokenLogo symbol={tx.tokenOut} />
-                  <span className="text-gray-800 text-sm font-bold">{tx.tokenOut}</span>
+                  <TokenLogo symbol={tx.token_out} />
+                  <span className="text-gray-800 text-sm font-bold">{tx.token_out}</span>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <TokenLogo symbol={tx.tokenIn} />
-                  <span className="text-gray-800 text-sm font-bold">{tx.tokenIn}</span>
-                  <span className="text-gray-500 text-xs">Send {tx.amountIn}</span>
+                  <TokenLogo symbol={tx.token_in} />
+                  <span className="text-gray-800 text-sm font-bold">{tx.token_in}</span>
+                  <span className="text-gray-500 text-xs">Send {tx.amount_in}</span>
                 </div>
               )}
             </div>
@@ -136,25 +136,33 @@ const PAGE_SIZE = 5;
 
 export function TransactionHistory() {
   const { address, isConnected } = useAccount();
-  const [txs, setTxs]   = useState<TxRecord[]>([]);
-  const [page, setPage] = useState(1);
+  const [txs, setTxs]       = useState<TxRow[]>([]);
+  const [page, setPage]     = useState(1);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (!isConnected || !address) return;
 
-    const load = () => setTxs(getTxHistory(address));
+    const load = async () => {
+      setLoading(true);
+      try {
+        const data = await getTxFromSupabase(address);
+        setTxs(data);
+      } catch (err) {
+        console.error('TransactionHistory load error:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     load();
 
-    // storage event: update if record comes from another tab
-    window.addEventListener('storage', load);
-    // triggered after swap/send on the same tab
-    window.addEventListener('arbidex_tx_update', load);
-    // refresh when page regains focus
+    // Refresh after swap/send on the same tab
+    window.addEventListener('aggrex_tx_update', load);
     window.addEventListener('focus', load);
 
     return () => {
-      window.removeEventListener('storage', load);
-      window.removeEventListener('arbidex_tx_update', load);
+      window.removeEventListener('aggrex_tx_update', load);
       window.removeEventListener('focus', load);
     };
   }, [isConnected, address]);
