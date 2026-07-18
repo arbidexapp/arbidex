@@ -1,4 +1,5 @@
-import { WalletClient, encodeFunctionData, Address } from 'viem';
+import { WalletClient, encodeFunctionData, Address, concat } from 'viem';
+import { Attribution } from 'ox/erc8021';
 import { RouteInfo, NATIVE_ETH, WETH_ADDRESS, AERODROME_V2, BUILDER_CODE } from './contracts';
 import { getDeadline } from './routing';
 import SwapRouter02ABI from './abis/SwapRouter02.json';
@@ -7,17 +8,11 @@ import AerodromeRouterABI from './abis/AerodromeRouter.json';
 import WETH9ABI from './abis/WETH9.json';
 
 // ── ERC-8021 Builder Code Attribution ────────────────────────────────────────
-// Format: builderCode(utf8 hex) + length(1 byte hex) + 8021 marker x8 (16 bytes)
-function erc8021Suffix(): string {
-  const codeBytes = Buffer.from(BUILDER_CODE, 'utf8');
-  const codeHex   = codeBytes.toString('hex');
-  const lenHex    = codeBytes.length.toString(16).padStart(2, '0');
-  const marker    = '80218021802180218021802180218021'; // 16 bytes
-  return codeHex + lenHex + marker;
-}
+// ox kütüphanesi standart suffix formatını üretiyor: 8021{code}8021
+const BUILDER_CODE_SUFFIX = Attribution.toDataSuffix({ codes: [BUILDER_CODE] }) as `0x${string}`;
 
 function withAttribution(calldata: `0x${string}`): `0x${string}` {
-  return (calldata + erc8021Suffix()) as `0x${string}`;
+  return concat([calldata, BUILDER_CODE_SUFFIX]);
 }
 
 function tx(to: string, data: `0x${string}`, value?: bigint) {

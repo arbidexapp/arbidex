@@ -2,12 +2,16 @@
 
 import { useState } from 'react';
 import { useAccount, usePublicClient, useWalletClient } from 'wagmi';
-import { parseUnits, maxUint256 } from 'viem';
+import { parseUnits, maxUint256, encodeFunctionData, concat } from 'viem';
+import { Attribution } from 'ox/erc8021';
 import { calculateMinAmountOut } from '@/lib/routing';
 import { executeSwap } from '@/lib/swap-executor';
-import { NATIVE_ETH, RouteInfo } from '@/lib/contracts';
+import { NATIVE_ETH, RouteInfo, BUILDER_CODE } from '@/lib/contracts';
 import ERC20ABI from '@/lib/abis/ERC20.json';
 import { saveTxToSupabase, updateLeaderboard } from '@/lib/supabase-db';
+
+// ERC-8021 suffix — approve tx'i de attribution'lı gönder
+const BUILDER_CODE_SUFFIX = Attribution.toDataSuffix({ codes: [BUILDER_CODE] }) as `0x${string}`;
 
 interface SwapButtonProps {
   tokenIn: string;
@@ -78,11 +82,15 @@ export function SwapButton({
 
         if (allowance < amount) {
           setStep(SwapStep.APPROVING);
-          const approveHash = await walletClient.writeContract({
-            address: tokenIn as `0x${string}`,
+          // Attribution ekleyerek approve gönder
+          const approveData = encodeFunctionData({
             abi: ERC20ABI,
             functionName: 'approve',
             args: [bestRoute.routerAddress as `0x${string}`, maxUint256],
+          });
+          const approveHash = await walletClient.sendTransaction({
+            to: tokenIn as `0x${string}`,
+            data: concat([approveData, BUILDER_CODE_SUFFIX]),
           });
           await publicClient.waitForTransactionReceipt({ hash: approveHash });
         }
