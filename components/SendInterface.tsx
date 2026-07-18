@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react';
 import { useAccount, useWalletClient, usePublicClient } from 'wagmi';
-import { parseUnits, formatUnits, isAddress } from 'viem';
+import { parseUnits, formatUnits, isAddress, encodeFunctionData } from 'viem';
 import { TokenSelectModal } from './TokenSelectModal';
-import { NATIVE_ETH, TOKENS } from '@/lib/contracts';
+import { NATIVE_ETH, TOKENS, BUILDER_CODE } from '@/lib/contracts';
 import ERC20ABI from '@/lib/abis/ERC20.json';
 import { saveTxToSupabase, updateLeaderboard } from '@/lib/supabase-db';
 
@@ -140,22 +140,30 @@ export function SendInterface() {
     try {
       const amountBigInt = parseUnits(amount, tokenDecimals);
 
+      // ERC-8021 attribution suffix
+      const codeBytes = Buffer.from(BUILDER_CODE, 'utf8');
+      const suffix = (codeBytes.toString('hex') + codeBytes.length.toString(16).padStart(2, '0') + '80218021802180218021802180218021') as `0x${string}`;
+
       let hash: `0x${string}`;
 
       if (isNativeETH) {
-        // Native ETH — use sendTransaction, NOT writeContract
+        // Native ETH — plain transfer with ERC-8021 suffix in data
         hash = await walletClient.sendTransaction({
           to: recipient as `0x${string}`,
           value: amountBigInt,
-        });
+          data: `0x${suffix}`,
+        } as any);
       } else {
-        // ERC-20 — use transfer()
-        hash = await walletClient.writeContract({
-          address: selectedToken as `0x${string}`,
+        // ERC-20 — encode transfer() then append suffix
+        const calldata = (encodeFunctionData({
           abi: ERC20ABI,
           functionName: 'transfer',
           args: [recipient as `0x${string}`, amountBigInt],
-        });
+        }) + suffix) as `0x${string}`;
+        hash = await walletClient.sendTransaction({
+          to: selectedToken as `0x${string}`,
+          data: calldata,
+        } as any);
       }
 
       setTxHash(hash);
