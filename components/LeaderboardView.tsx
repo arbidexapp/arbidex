@@ -29,27 +29,27 @@ export function LeaderboardView() {
           })
         );
         setUsernames(names);
+
+        // Rank ve kişisel satırı data geldikten sonra hemen hesapla
+        if (isConnected && address) {
+          const idx = rows.findIndex((r) => r.wallet.toLowerCase() === address.toLowerCase());
+          if (idx >= 0) {
+            setMyRank(idx + 1);
+            setMyRow(rows[idx]);
+          } else {
+            // Liste dışında olabilir — Supabase'den ayrıca çek
+            getMyRank(address)
+              .then((row) => {
+                if (row) setMyRow(row);
+                // Sıralama listede yok, toplam sıra bilinmiyor
+                setMyRank(null);
+              })
+              .catch(console.error);
+          }
+        }
       })
       .catch(console.error)
       .finally(() => setLoading(false));
-  }, []);
-
-  useEffect(() => {
-    if (!isConnected || !address) return;
-    getMyRank(address)
-      .then((row) => {
-        setMyRow(row);
-        if (row) {
-          // Rank'ı zaten yüklü data üzerinden hesapla — setData callback içinde setMyRank çağırmak yerine
-          setData((prev) => {
-            const idx = prev.findIndex((r) => r.wallet.toLowerCase() === address.toLowerCase());
-            // Side-effect'siz: hesaplanan rank'ı bir sonraki render'da set et
-            setTimeout(() => setMyRank(idx >= 0 ? idx + 1 : null), 0);
-            return prev;
-          });
-        }
-      })
-      .catch(console.error);
   }, [isConnected, address]);
 
   const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
