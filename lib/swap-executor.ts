@@ -1,5 +1,5 @@
-import { WalletClient, encodeFunctionData, Address } from 'viem';
-import { RouteInfo, NATIVE_ETH, WETH_ADDRESS, AERODROME_V2, PANCAKESWAP_V3 } from './contracts';
+import { WalletClient, encodeFunctionData, Address, encodeAbiParameters, parseAbiParameters } from 'viem';
+import { RouteInfo, NATIVE_ETH, WETH_ADDRESS, AERODROME_V2, PANCAKESWAP_V3, BUILDER_CODE } from './contracts';
 import { getDeadline } from './routing';
 import SwapRouter02ABI from './abis/SwapRouter02.json';
 import PancakeSwapV3RouterABI from './abis/PancakeSwapV3Router.json';
@@ -105,8 +105,15 @@ export async function executeSwap(
 }
 
 /**
+ * Appends builder code to calldata for Base attribution (ERC-8021)
+ */
+function appendBuilderCode(calldata: `0x${string}`): `0x${string}` {
+  const encoded = Buffer.from(BUILDER_CODE, 'utf8').toString('hex');
+  return (calldata + encoded) as `0x${string}`;
+}
+
+/**
  * Execute Uniswap V3 / PancakeSwap V3 / Aerodrome Slipstream swap
- * isPancake=true ise struct'a deadline eklenir (PancakeSwap V3 bunu gerektiriyor)
  */
 async function executeV3Swap(
   walletClient: WalletClient,
@@ -130,7 +137,6 @@ async function executeV3Swap(
     isPancake
       ? { tokenIn: actualTokenIn, tokenOut: actualTokenOut, fee, recipient: overrideRecipient, deadline, amountIn, amountOutMinimum, sqrtPriceLimitX96: 0n }
       : { tokenIn: actualTokenIn, tokenOut: actualTokenOut, fee, recipient: overrideRecipient, amountIn, amountOutMinimum, sqrtPriceLimitX96: 0n };
-
   // ETH output: swap → WETH, sonra unwrap
   if (isEthOut) {
     const swapCalldata = encodeFunctionData({
