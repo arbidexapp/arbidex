@@ -31,6 +31,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={inter.variable}>
+      <head>
+        <meta name="base:app_id" content="6a5b3c0878da0c9886635afc" />
+      </head>
       <body className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50">
         <Web3Provider>
           {children}
