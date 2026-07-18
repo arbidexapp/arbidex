@@ -158,7 +158,8 @@ export function SwapButton({
       window.dispatchEvent(new Event('aggrex_tx_update'));
 
       setStep(SwapStep.SUCCESS);
-      onSwapSuccess?.();          // reset UI + refresh balances
+      // Toast'un görünmesi için kısa bekle, sonra UI'ı sıfırla
+      setTimeout(() => onSwapSuccess?.(), 4000);
 
     } catch (err) {
       console.error('Swap error:', err);
@@ -192,11 +193,23 @@ export function SwapButton({
     );
   }
 
-  if (disabled) {
+  if (disabled && step === SwapStep.IDLE) {
     return (
       <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-semibold text-base cursor-not-allowed">
         {!amountIn || parseFloat(amountIn) <= 0 ? 'Enter an amount' : 'Finding best route…'}
       </button>
+    );
+  }
+
+  if (disabled) {
+    // Processing/Success/Error durumlarında toast'ları göster, butonu disable tut
+    return (
+      <>
+        <button disabled className="w-full py-4 bg-gray-100 text-gray-400 rounded-xl font-semibold text-base cursor-not-allowed">
+          {!amountIn || parseFloat(amountIn) <= 0 ? 'Enter an amount' : 'Finding best route…'}
+        </button>
+        <Toasts step={step} txHash={txHash} error={error} setStep={setStep} setTxHash={setTxHash} setError={setError} />
+      </>
     );
   }
 
@@ -216,84 +229,101 @@ export function SwapButton({
         ) : 'Swap'}
       </button>
 
-      {/* ── Fixed toasts — bottom right ─────────────────────────────── */}
-      <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 flex flex-col gap-3 sm:w-80 pointer-events-none">
+      <Toasts step={step} txHash={txHash} error={error} setStep={setStep} setTxHash={setTxHash} setError={setError} />
+    </>
+  );
+}
 
-        {/* Processing toast */}
-        {isProcessing && (
-          <div className="pointer-events-auto flex items-start gap-3 bg-white border border-orange-200 shadow-xl rounded-2xl p-4">
-            <span className="mt-0.5 h-4 w-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin shrink-0" />
-            <div>
-              <p className="text-sm font-semibold text-gray-800">
-                {step === SwapStep.APPROVING  && 'Waiting for token approval…'}
-                {step === SwapStep.SWAPPING   && 'Confirm the swap in your wallet…'}
-                {step === SwapStep.CONFIRMING && 'Confirming on-chain…'}
-              </p>
-              <p className="text-xs text-gray-400 mt-0.5">Please wait</p>
-            </div>
+// ── Toast bileşeni — disabled branch dahil her yerden render edilebilir ───────
+function Toasts({
+  step, txHash, error, setStep, setTxHash, setError,
+}: {
+  step: SwapStep;
+  txHash: string | null;
+  error: string | null;
+  setStep: (s: SwapStep) => void;
+  setTxHash: (h: string | null) => void;
+  setError: (e: string | null) => void;
+}) {
+  const isProcessing = step === SwapStep.APPROVING || step === SwapStep.SWAPPING || step === SwapStep.CONFIRMING;
+
+  return (
+    <div className="fixed bottom-4 right-4 left-4 sm:left-auto sm:right-6 sm:bottom-6 z-50 flex flex-col gap-3 sm:w-80 pointer-events-none">
+
+      {/* Processing toast */}
+      {isProcessing && (
+        <div className="pointer-events-auto flex items-start gap-3 bg-white border border-orange-200 shadow-xl rounded-2xl p-4">
+          <span className="mt-0.5 h-4 w-4 rounded-full border-2 border-orange-500 border-t-transparent animate-spin shrink-0" />
+          <div>
+            <p className="text-sm font-semibold text-gray-800">
+              {step === SwapStep.APPROVING  && 'Waiting for token approval…'}
+              {step === SwapStep.SWAPPING   && 'Confirm the swap in your wallet…'}
+              {step === SwapStep.CONFIRMING && 'Confirming on-chain…'}
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">Please wait</p>
           </div>
-        )}
+        </div>
+      )}
 
-        {/* Success toast */}
-        {step === SwapStep.SUCCESS && txHash && (
-          <div className="pointer-events-auto flex items-start gap-3 bg-white border border-green-200 shadow-xl rounded-2xl p-4">
-            <div className="shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-800">Swap successful!</p>
-              <a
-                href={`https://basescan.org/tx/${txHash}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-xs text-orange-500 hover:text-orange-600 underline font-medium mt-0.5 block"
-              >
-                View on BaseScan ↗
-              </a>
-            </div>
-            <button
-              onClick={() => { setStep(SwapStep.IDLE); setTxHash(null); }}
-              className="text-gray-300 hover:text-gray-500 shrink-0"
+      {/* Success toast */}
+      {step === SwapStep.SUCCESS && txHash && (
+        <div className="pointer-events-auto flex items-start gap-3 bg-white border border-green-200 shadow-xl rounded-2xl p-4">
+          <div className="shrink-0 w-8 h-8 rounded-full bg-green-100 flex items-center justify-center">
+            <svg className="w-4 h-4 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-800">Swap successful!</p>
+            <a
+              href={`https://basescan.org/tx/${txHash}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs text-orange-500 hover:text-orange-600 underline font-medium mt-0.5 block"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              View on BaseScan ↗
+            </a>
           </div>
-        )}
+          <button
+            onClick={() => { setStep(SwapStep.IDLE); setTxHash(null); }}
+            className="text-gray-300 hover:text-gray-500 shrink-0"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
-        {/* Error toast */}
-        {step === SwapStep.ERROR && error && (
-          <div className="pointer-events-auto flex items-start gap-3 bg-white border border-red-200 shadow-xl rounded-2xl p-4">
-            <div className="shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
-              <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-semibold text-gray-800">Swap failed</p>
-              <p className="text-xs text-gray-500 mt-0.5 break-words">{error}</p>
-              <button
-                onClick={() => { setError(null); setStep(SwapStep.IDLE); }}
-                className="text-xs text-orange-500 hover:text-orange-600 underline font-medium mt-1"
-              >
-                Try again
-              </button>
-            </div>
+      {/* Error toast */}
+      {step === SwapStep.ERROR && error && (
+        <div className="pointer-events-auto flex items-start gap-3 bg-white border border-red-200 shadow-xl rounded-2xl p-4">
+          <div className="shrink-0 w-8 h-8 rounded-full bg-red-100 flex items-center justify-center">
+            <svg className="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold text-gray-800">Swap failed</p>
+            <p className="text-xs text-gray-500 mt-0.5 break-words">{error}</p>
             <button
               onClick={() => { setError(null); setStep(SwapStep.IDLE); }}
-              className="text-gray-300 hover:text-gray-500 shrink-0"
+              className="text-xs text-orange-500 hover:text-orange-600 underline font-medium mt-1"
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+              Try again
             </button>
           </div>
-        )}
+          <button
+            onClick={() => { setError(null); setStep(SwapStep.IDLE); }}
+            className="text-gray-300 hover:text-gray-500 shrink-0"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+      )}
 
-      </div>
-    </>
+    </div>
   );
 }
